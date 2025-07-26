@@ -279,8 +279,8 @@
                 const userPositionData = new Array(COURSE_MONTHS.length).fill(effectivePosition > 0 ? effectivePosition : null);
 
                 lineChart.data.datasets = [
-                    { label: 'Avance General Estimado', data: generalLineData, borderColor: '#4CAF50', backgroundColor: 'rgba(76, 175, 80, 0.1)', fill: true, tension: 0.2 },
-                    { label: 'Tu Posición Efectiva', data: userPositionData, borderColor: '#1B5E20', borderDash: [5, 5], fill: false, pointRadius: 0 }
+                    { label: 'Avance de la bolsa estimado', data: generalLineData, borderColor: '#4CAF50', backgroundColor: 'rgba(76, 175, 80, 0.1)', fill: true, tension: 0.2 },
+                    { label: 'Posición en bolsa del aspirante', data: userPositionData, borderColor: '#1B5E20', borderDash: [5, 5], fill: false, pointRadius: 0 }
                 ];
                 lineChart.update();
 
