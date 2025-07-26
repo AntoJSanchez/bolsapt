@@ -1,0 +1,319 @@
+import React, { useState, useEffect } from 'react';
+import { LineChart, Line, BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Users, MapPin, Target, Calendar, CheckCircle } from 'lucide-react';
+
+// --- DATOS BASE Y CONFIGURACIÓN ---
+
+// Previsión de bajada actualizada.
+const BASE_MONTHLY_DROPS = {
+  'Agosto': 850,
+  'Septiembre': 720, 'Octubre': 160, 'Noviembre': 90, 'Diciembre': 5,
+  'Enero': 145, 'Febrero': 70, 'Marzo': 80, 'Abril': 50, 'Mayo': 50, 'Junio': 10,
+};
+
+const { Agosto, ...COURSE_MONTHLY_DROPS } = BASE_MONTHLY_DROPS;
+const COURSE_MONTHS = Object.keys(COURSE_MONTHLY_DROPS);
+
+// Calendario de llamamientos SIPRI (basado en el ejemplo proporcionado)
+const CALENDARIO_SIPRI = [
+    { mes: 'Septiembre', dia: 'Jueves 4 Sep', incorporacion: 'Miércoles 10 Sep' },
+    { mes: 'Septiembre', dia: 'Martes 9 Sep', incorporacion: 'Lunes 15 Sep' },
+    { mes: 'Septiembre', dia: 'Jueves 11 Sep', incorporacion: 'Miércoles 17 Sep' },
+    { mes: 'Septiembre', dia: 'Martes 16 Sep', incorporacion: 'Lunes 22 Sep' },
+    { mes: 'Septiembre', dia: 'Jueves 18 Sep', incorporacion: 'Miércoles 24 Sep' },
+    { mes: 'Septiembre', dia: 'Martes 23 Sep', incorporacion: 'Lunes 29 Sep' },
+    { mes: 'Septiembre', dia: 'Jueves 25 Sep', incorporacion: 'Miércoles 1 Oct' },
+    { mes: 'Septiembre', dia: 'Martes 30 Sep', incorporacion: 'Lunes 6 Oct' },
+    { mes: 'Octubre', dia: 'Jueves 2 Oct', incorporacion: 'Miércoles 8 Oct' },
+    { mes: 'Octubre', dia: 'Martes 7 Oct', incorporacion: 'Martes 14 Oct' },
+    { mes: 'Octubre', dia: 'Jueves 9 Oct', incorporacion: 'Miércoles 15 Oct' },
+    { mes: 'Octubre', dia: 'Martes 14 Oct', incorporacion: 'Lunes 20 Oct' },
+    { mes: 'Octubre', dia: 'Jueves 16 Oct', incorporacion: 'Miércoles 22 Oct' },
+    { mes: 'Octubre', dia: 'Martes 21 Oct', incorporacion: 'Lunes 27 Oct' },
+    { mes: 'Octubre', dia: 'Jueves 23 Oct', incorporacion: 'Miércoles 29 Oct' },
+    { mes: 'Octubre', dia: 'Martes 28 Oct', incorporacion: 'Lunes 3 Nov' },
+    { mes: 'Noviembre', dia: 'Martes 4 Nov', incorporacion: 'Lunes 10 Nov' },
+    { mes: 'Noviembre', dia: 'Jueves 6 Nov', incorporacion: 'Miércoles 12 Nov' },
+    { mes: 'Noviembre', dia: 'Martes 11 Nov', incorporacion: 'Lunes 17 Nov' },
+    { mes: 'Noviembre', dia: 'Jueves 13 Nov', incorporacion: 'Miércoles 19 Nov' },
+    { mes: 'Noviembre', dia: 'Martes 18 Nov', incorporacion: 'Lunes 24 Nov' },
+    { mes: 'Noviembre', dia: 'Jueves 20 Nov', incorporacion: 'Miércoles 26 Nov' },
+    { mes: 'Noviembre', dia: 'Martes 25 Nov', incorporacion: 'Lunes 1 Dic' },
+    { mes: 'Diciembre', dia: 'Martes 2 Dic', incorporacion: 'Martes 9 Dic' },
+    { mes: 'Diciembre', dia: 'Jueves 4 Dic', incorporacion: 'Miércoles 10 Dic' },
+    { mes: 'Diciembre', dia: 'Martes 9 Dic', incorporacion: 'Lunes 15 Dic' },
+    { mes: 'Diciembre', dia: 'Jueves 11 Dic', incorporacion: 'Miércoles 17 Dic' },
+    { mes: 'Enero', dia: 'Jueves 8 Ene', incorporacion: 'Miércoles 14 Ene' },
+    { mes: 'Enero', dia: 'Martes 13 Ene', incorporacion: 'Lunes 19 Ene' },
+    { mes: 'Enero', dia: 'Jueves 15 Ene', incorporacion: 'Miércoles 21 Ene' },
+    { mes: 'Enero', dia: 'Martes 20 Ene', incorporacion: 'Lunes 26 Ene' },
+    { mes: 'Enero', dia: 'Jueves 22 Ene', incorporacion: 'Miércoles 28 Ene' },
+    { mes: 'Enero', dia: 'Martes 27 Ene', incorporacion: 'Lunes 2 Feb' },
+    { mes: 'Febrero', dia: 'Martes 3 Feb', incorporacion: 'Lunes 9 Feb' },
+    { mes: 'Febrero', dia: 'Jueves 5 Feb', incorporacion: 'Miércoles 11 Feb' },
+    { mes: 'Febrero', dia: 'Martes 10 Feb', incorporacion: 'Lunes 16 Feb' },
+    { mes: 'Febrero', dia: 'Jueves 12 Feb', incorporacion: 'Miércoles 18 Feb' },
+    { mes: 'Febrero', dia: 'Martes 17 Feb', incorporacion: 'Lunes 23 Feb' },
+    { mes: 'Febrero', dia: 'Jueves 19 Feb', incorporacion: 'Miércoles 25 Feb' },
+    { mes: 'Marzo', dia: 'Martes 3 Mar', incorporacion: 'Lunes 9 Mar' },
+    { mes: 'Marzo', dia: 'Jueves 5 Mar', incorporacion: 'Miércoles 11 Mar' },
+    { mes: 'Marzo', dia: 'Martes 10 Mar', incorporacion: 'Lunes 16 Mar' },
+    { mes: 'Marzo', dia: 'Jueves 12 Mar', incorporacion: 'Miércoles 18 Mar' },
+    { mes: 'Marzo', dia: 'Martes 17 Mar', incorporacion: 'Lunes 23 Mar' },
+    { mes: 'Abril', dia: 'Martes 7 Abr', incorporacion: 'Lunes 13 Abr' },
+    { mes: 'Abril', dia: 'Jueves 9 Abr', incorporacion: 'Miércoles 15 Abr' },
+    { mes: 'Abril', dia: 'Martes 14 Abr', incorporacion: 'Lunes 20 Abr' },
+    { mes: 'Abril', dia: 'Jueves 16 Abr', incorporacion: 'Miércoles 22 Abr' },
+    { mes: 'Mayo', dia: 'Martes 5 May', incorporacion: 'Lunes 11 May' },
+    { mes: 'Mayo', dia: 'Jueves 7 May', incorporacion: 'Miércoles 13 May' },
+    { mes: 'Mayo', dia: 'Martes 12 May', incorporacion: 'Lunes 18 May' },
+    { mes: 'Junio', dia: 'Martes 2 Jun', incorporacion: 'Lunes 8 Jun' },
+];
+
+// Ponderación provincial
+const PROVINCE_DATA = {
+  'Sevilla': { weight: 1.5 }, 'Málaga': { weight: 1.4 }, 'Cádiz': { weight: 1.2 },
+  'Granada': { weight: 1.1 }, 'Córdoba': { weight: 1.0 }, 'Jaén': { weight: 0.9 },
+  'Almería': { weight: 0.8 }, 'Huelva': { weight: 0.7 },
+};
+
+const ALL_PROVINCES = Object.keys(PROVINCE_DATA);
+const TOTAL_PROVINCE_WEIGHT = ALL_PROVINCES.reduce((acc, p) => acc + PROVINCE_DATA[p].weight, 0);
+
+// --- COMPONENTES DE LA UI ---
+const ResultsDisplay = ({ prediction }) => {
+  if (!prediction) return null;
+
+  let content;
+  if (prediction.isSummer) {
+    content = <p className="text-3xl md:text-4xl font-bold">¡Adjudicación estimada en Verano!</p>;
+  } else if (!prediction.isPredicted || !prediction.call) {
+    content = (
+      <div>
+        <p className="text-2xl md:text-3xl font-bold">No se estima llamada este curso.</p>
+        <p className="text-sm mt-2 opacity-90">Tu posición efectiva es demasiado alta para los llamamientos previstos.</p>
+      </div>
+    );
+  } else {
+    content = (
+      <div>
+        <p className="text-3xl md:text-4xl font-bold">{`Estimación: ${prediction.month}`}</p>
+        <div className="mt-2 text-xl space-y-1">
+          <p>Llamamiento SIPRI: <strong>{prediction.call.dia}</strong></p>
+          <p>Incorporación prevista: <strong>{prediction.call.incorporacion}</strong></p>
+        </div>
+        <p className="text-xs mt-3 opacity-80">Cálculo basado en una competencia real de ~{Math.round(prediction.effectivePosition)} personas para tus provincias.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="text-center mb-8 p-6 rounded-2xl shadow-lg text-white" style={{ background: 'linear-gradient(135deg, #4CAF50, #1B5E20)' }}>
+      {content}
+    </div>
+  );
+};
+
+
+const App = () => {
+  // --- ESTADO DE LA APLICACIÓN ---
+  const [position, setPosition] = useState(1200);
+  const [augustVacancies, setAugustVacancies] = useState(BASE_MONTHLY_DROPS['Agosto']);
+  const [selectedProvinces, setSelectedProvinces] = useState(['Sevilla', 'Málaga', 'Granada', 'Cádiz']);
+  
+  const [prediction, setPrediction] = useState(null);
+  const [chartData, setChartData] = useState({ lineData: [], barData: [] });
+
+  // --- LÓGICA DE PREDICCIÓN ---
+  const calculatePrediction = () => {
+    // 1. Calcular posición tras vacantes de verano
+    const effectivePositionAfterSummer = Math.max(0, position - augustVacancies);
+    if (position <= augustVacancies) {
+        const summerPrediction = { isSummer: true };
+        setPrediction(summerPrediction);
+        updateCharts(summerPrediction, 0);
+        return;
+    }
+
+    // 2. Calcular 'fuga' de competidores
+    const unselectedProvincesWeight = ALL_PROVINCES
+        .filter(p => !selectedProvinces.includes(p))
+        .reduce((acc, p) => acc + PROVINCE_DATA[p].weight, 0);
+    
+    const escapeRatio = unselectedProvincesWeight / TOTAL_PROVINCE_WEIGHT;
+    const finalEffectivePosition = effectivePositionAfterSummer * (1 - escapeRatio);
+
+    // 3. Calcular bajada personalizada y encontrar el llamamiento SIPRI
+    let cumulativePersonalized = 0;
+    let predictedResult = { isPredicted: false, effectivePosition: finalEffectivePosition };
+
+    const selectedProvincesWeight = TOTAL_PROVINCE_WEIGHT - unselectedProvincesWeight;
+    const provincialMultiplier = selectedProvinces.length > 0 ? selectedProvincesWeight / TOTAL_PROVINCE_WEIGHT : 0;
+    
+    let selectivityModifier = 1.0;
+    if (selectedProvinces.length <= 2) selectivityModifier = 0.9;
+    if (selectedProvinces.length >= 6) selectivityModifier = 1.05;
+    const totalMultiplier = provincialMultiplier * selectivityModifier;
+
+    for (const month of COURSE_MONTHS) {
+      const monthDrop = COURSE_MONTHLY_DROPS[month] * totalMultiplier;
+      const prevCumulative = cumulativePersonalized;
+      cumulativePersonalized += monthDrop;
+
+      if (finalEffectivePosition <= cumulativePersonalized) {
+        const positionIntoMonth = finalEffectivePosition - prevCumulative;
+        
+        const callsInMonth = CALENDARIO_SIPRI.filter(c => c.mes === month);
+        let predictedCall = null;
+
+        if (callsInMonth.length > 0 && monthDrop > 0) {
+            const proportionInMonth = positionIntoMonth / monthDrop;
+            const callIndex = Math.min(
+                Math.floor(proportionInMonth * callsInMonth.length),
+                callsInMonth.length - 1
+            );
+            predictedCall = callsInMonth[callIndex];
+        }
+        
+        predictedResult = { 
+            month, 
+            call: predictedCall,
+            isPredicted: true, 
+            isSummer: false, 
+            effectivePosition: finalEffectivePosition 
+        };
+        break;
+      }
+    }
+    
+    setPrediction(predictedResult);
+    updateCharts(predictedResult, finalEffectivePosition);
+  };
+
+  const updateCharts = (currentPrediction, effectivePosition) => {
+    let cumulativeGeneral = 0;
+    const generalLineData = COURSE_MONTHS.map(month => {
+        cumulativeGeneral += COURSE_MONTHLY_DROPS[month];
+        return { name: month.substring(0,3), "Avance General": cumulativeGeneral };
+    });
+
+    const userPositionLine = generalLineData.map(d => ({...d, "Tu Posición Efectiva": effectivePosition > 0 ? effectivePosition : null }));
+    const barData = COURSE_MONTHS.map(month => ({
+        name: month.substring(0,3),
+        "Llamamientos Estimados": COURSE_MONTHLY_DROPS[month]
+    }));
+
+    setChartData({ lineData: userPositionLine, barData });
+  };
+
+  // --- EFECTOS ---
+  useEffect(() => {
+    if (selectedProvinces.length > 0) {
+      calculatePrediction();
+    }
+  }, [position, augustVacancies, selectedProvinces]);
+
+  // --- MANEJADORES DE EVENTOS ---
+  const handleProvinceChange = (province) => {
+    setSelectedProvinces(prev => 
+      prev.includes(province) 
+        ? prev.filter(p => p !== province)
+        : [...prev, province]
+    );
+  };
+
+  return (
+    <div className="bg-[#F1F8E9] min-h-screen font-sans text-[#333] p-4 sm:p-6 lg:p-8">
+      <div className="max-w-6xl mx-auto">
+        
+        <header className="text-center mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-[#1B5E20] mb-2">Pronóstico Personalizado Bolsa PT</h1>
+          <p className="text-md text-[#388E3C]">Andalucía - Curso 2025/2026</p>
+        </header>
+
+        {/* --- PANEL DE CONTROL --- */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
+            <h2 className="text-xl font-bold text-[#1B5E20] mb-4 border-b border-gray-200 pb-3">Configura tu simulación</h2>
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+                <div className="md:col-span-2 space-y-4">
+                    <div>
+                        <label htmlFor="position" className="flex items-center text-sm font-semibold text-gray-700 mb-1">
+                            <Target className="w-4 h-4 mr-2 text-[#388E3C]" /> Tu posición en bolsa
+                        </label>
+                        <input type="number" id="position" value={position} onChange={(e) => setPosition(parseInt(e.target.value) || 0)}
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 transition" />
+                    </div>
+                     <div>
+                        <label htmlFor="vacancies" className="flex items-center text-sm font-semibold text-gray-700 mb-1">
+                            <Calendar className="w-4 h-4 mr-2 text-[#388E3C]" /> Vacantes informatizadas (Agosto)
+                        </label>
+                        <input type="number" id="vacancies" value={augustVacancies} onChange={(e) => setAugustVacancies(parseInt(e.target.value) || 0)}
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 transition" />
+                    </div>
+                </div>
+                <div className="md:col-span-3">
+                     <label className="flex items-center text-sm font-semibold text-gray-700 mb-2">
+                        <MapPin className="w-4 h-4 mr-2 text-[#388E3C]" /> Provincias seleccionadas
+                    </label>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        {ALL_PROVINCES.map(province => (
+                        <label key={province} className={`flex items-center p-2 border rounded-lg cursor-pointer transition-all duration-200 ${selectedProvinces.includes(province) ? 'bg-green-50 border-green-600 shadow-sm' : 'border-gray-300'}`}>
+                            <input type="checkbox" checked={selectedProvinces.includes(province)} onChange={() => handleProvinceChange(province)}
+                                className="h-4 w-4 text-green-600 border-gray-300 rounded focus:ring-green-500" />
+                            <span className="ml-2 text-sm text-gray-800">{province}</span>
+                        </label>
+                        ))}
+                    </div>
+                </div>
+            </div>
+             {selectedProvinces.length === 0 && (
+                <div className="text-center mt-4 p-3 rounded-lg bg-red-100 text-red-700">
+                    Por favor, selecciona al menos una provincia para realizar el cálculo.
+                </div>
+            )}
+        </div>
+        
+        {/* --- RESULTADOS Y GRÁFICOS --- */}
+        <ResultsDisplay prediction={prediction} />
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
+                <h3 className="text-lg font-bold text-[#1B5E20] mb-4 text-center">Avance Acumulado vs. Tu Posición</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={chartData.lineData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                        <XAxis dataKey="name" tick={{fontSize: 12}} />
+                        <YAxis tick={{fontSize: 12}} />
+                        <Tooltip contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', border: '1px solid #ccc', borderRadius: '8px' }}/>
+                        <Legend wrapperStyle={{fontSize: "12px", paddingTop: '10px'}}/>
+                        <Line type="monotone" dataKey="Avance General" stroke="#4CAF50" strokeWidth={3} dot={false} />
+                        <Line type="monotone" dataKey="Tu Posición Efectiva" stroke="#1B5E20" strokeWidth={2} strokeDasharray="5 5" dot={false} />
+                    </LineChart>
+                </ResponsiveContainer>
+            </div>
+            <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
+                <h3 className="text-lg font-bold text-[#1B5E20] mb-4 text-center">Llamamientos Mensuales Estimados (General)</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={chartData.barData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                        <XAxis dataKey="name" tick={{fontSize: 12}}/>
+                        <YAxis tick={{fontSize: 12}}/>
+                        <Tooltip cursor={{fill: 'rgba(165, 214, 167, 0.4)'}} contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', border: '1px solid #ccc', borderRadius: '8px' }}/>
+                        <Bar dataKey="Llamamientos Estimados">
+                            {chartData.barData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={COURSE_MONTHS[index] === prediction?.month ? '#1B5E20' : '#A5D6A7'} />
+                            ))}
+                        </Bar>
+                    </BarChart>
+                </ResponsiveContainer>
+            </div>
+        </div>
+        <footer className="text-center text-xs text-gray-500 pt-8">
+            <p><strong>Aviso:</strong> Esta herramienta es una simulación y ofrece una estimación no oficial. Los datos reales pueden variar.</p>
+        </footer>
+      </div>
+    </div>
+  );
+};
+
+export default App;
