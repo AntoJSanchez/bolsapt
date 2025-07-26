@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pronóstico Interactivo Bolsa PT Andalucía 2025-26</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS (versión pre-compilada para mayor compatibilidad) -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Chart.js para los gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Google Fonts -->
@@ -31,6 +31,12 @@
         .result-card {
             background: linear-gradient(135deg, #4CAF50, #1B5E20);
         }
+        /* Colores personalizados para Tailwind (ya que el script JIT no se usa) */
+        .bg-green-50 { background-color: #F1F8E9; }
+        .text-green-600 { color: #4CAF50; }
+        .border-green-600 { border-color: #4CAF50; }
+        .focus\:ring-green-500:focus { --tw-ring-color: #4CAF50; }
+        .text-gray-800 { color: #424242; }
     </style>
 </head>
 <body class="p-4 sm:p-6 lg:p-8">
@@ -153,11 +159,11 @@
                     input.id = `prov-${name}`;
                     input.name = name;
                     input.checked = province.checked;
-                    input.className = 'h-4 w-4 text-green-600 border-gray-300 rounded focus:ring-green-500';
+                    input.className = 'h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500';
                     const label = document.createElement('label');
                     label.htmlFor = `prov-${name}`;
                     label.textContent = name;
-                    label.className = 'ml-2 block text-sm text-gray-800 cursor-pointer';
+                    label.className = 'ml-2 block text-sm text-gray-900 cursor-pointer';
                     div.appendChild(input);
                     div.appendChild(label);
                     provincesContainer.appendChild(div);
