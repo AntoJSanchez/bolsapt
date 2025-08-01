@@ -31,54 +31,36 @@
         .result-card {
             background: linear-gradient(135deg, #4CAF50, #1B5E20);
         }
-        /* Colores personalizados para Tailwind (ya que el script JIT no se usa) */
-        .bg-green-50 { background-color: #F1F8E9; }
-        .text-green-600 { color: #4CAF50; }
-        .border-green-600 { border-color: #4CAF50; }
-        .focus\:ring-green-500:focus { --tw-ring-color: #4CAF50; }
-        .text-gray-800 { color: #424242; }
     </style>
 </head>
 <body class="p-4 sm:p-6 lg:p-8">
 
-    <main class="max-w-6xl mx-auto">
+    <main class="max-w-4xl mx-auto">
 
         <header class="text-center mb-8">
             <h1 class="text-3xl md:text-4xl font-bold text-[#1B5E20] mb-2">Pronóstico Personalizado Bolsa PT</h1>
             <p class="text-md text-[#388E3C]">Andalucía - Curso 2025/2026</p>
         </header>
 
-        <!-- Panel de Control -->
+        <!-- Panel de Control Simplificado -->
         <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
             <h2 class="text-xl font-bold text-[#1B5E20] mb-4 border-b border-gray-200 pb-3">Configura tu simulación</h2>
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
-                <div class="md:col-span-2 space-y-4">
-                    <div>
-                        <label for="positionInput" class="flex items-center text-sm font-semibold text-gray-700 mb-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-[#388E3C]"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
-                            Tu posición en bolsa
-                        </label>
-                        <input type="number" id="positionInput" value="1200" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                    </div>
-                    <div>
-                        <label for="vacanciesInput" class="flex items-center text-sm font-semibold text-gray-700 mb-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-[#388E3C]"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                            Vacantes informatizadas (Agosto)
-                        </label>
-                        <input type="number" id="vacanciesInput" value="850" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
-                    </div>
-                </div>
-                <div class="md:col-span-3">
-                    <label class="flex items-center text-sm font-semibold text-gray-700 mb-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-[#388E3C]"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                        Provincias seleccionadas
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="positionInput" class="flex items-center text-sm font-semibold text-gray-700 mb-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-[#388E3C]"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+                        Tu posición en bolsa
                     </label>
-                    <div id="provincesContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                        <!-- Checkboxes se insertarán aquí -->
-                    </div>
+                    <input type="number" id="positionInput" value="1200" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
+                </div>
+                <div>
+                    <label for="vacanciesInput" class="flex items-center text-sm font-semibold text-gray-700 mb-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-[#388E3C]"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        Vacantes informatizadas (Agosto)
+                    </label>
+                    <input type="number" id="vacanciesInput" value="850" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition">
                 </div>
             </div>
-            <div id="errorBlock" class="hidden text-center mt-4 p-3 rounded-lg bg-red-100 text-red-700"></div>
         </div>
         
         <!-- Resultados y Gráficos -->
@@ -94,7 +76,7 @@
                     </div>
                 </div>
                 <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
-                    <h3 class="text-lg font-bold text-[#1B5E20] mb-4 text-center">Llamamientos Mensuales Estimados (General)</h3>
+                    <h3 class="text-lg font-bold text-[#1B5E20] mb-4 text-center">Llamamientos Mensuales Estimados</h3>
                     <div class="chart-container">
                         <canvas id="barChart"></canvas>
                     </div>
@@ -110,9 +92,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // --- DATOS BASE Y CONFIGURACIÓN ---
+            // Se usa el promedio del rango proporcionado por el usuario.
             const COURSE_MONTHLY_DROPS = {
-                'Septiembre': 720, 'Octubre': 160, 'Noviembre': 90, 'Diciembre': 5,
-                'Enero': 145, 'Febrero': 70, 'Marzo': 80, 'Abril': 50, 'Mayo': 50, 'Junio': 10,
+                'Septiembre': 725, 'Octubre': 160, 'Noviembre': 90, 'Diciembre': 5,
+                'Enero': 145, 'Febrero': 70, 'Marzo': 80, 'Abril': 50, 'Mayo': 50, 'Junio': 8,
             };
             const COURSE_MONTHS = Object.keys(COURSE_MONTHLY_DROPS);
 
@@ -128,20 +111,10 @@
                 { mes: 'Mayo', dia: 'Martes 5 May', incorporacion: 'Lunes 11 May' }, { mes: 'Mayo', dia: 'Jueves 7 May', incorporacion: 'Miércoles 13 May' }, { mes: 'Mayo', dia: 'Martes 12 May', incorporacion: 'Lunes 18 May' },
                 { mes: 'Junio', dia: 'Martes 2 Jun', incorporacion: 'Lunes 8 Jun' },
             ];
-            
-            const PROVINCE_DATA = {
-                'Sevilla': { weight: 1.5, checked: true }, 'Málaga': { weight: 1.4, checked: true }, 'Cádiz': { weight: 1.2, checked: true },
-                'Granada': { weight: 1.1, checked: true }, 'Córdoba': { weight: 1.0, checked: false }, 'Jaén': { weight: 0.9, checked: false },
-                'Almería': { weight: 0.8, checked: false }, 'Huelva': { weight: 0.7, checked: false },
-            };
-            const ALL_PROVINCES = Object.keys(PROVINCE_DATA);
-            const TOTAL_PROVINCE_WEIGHT = ALL_PROVINCES.reduce((acc, p) => acc + PROVINCE_DATA[p].weight, 0);
 
             // --- Elementos del DOM ---
             const positionInput = document.getElementById('positionInput');
             const vacanciesInput = document.getElementById('vacanciesInput');
-            const provincesContainer = document.getElementById('provincesContainer');
-            const errorBlock = document.getElementById('errorBlock');
             const resultsBlock = document.getElementById('resultsBlock');
             const resultText = document.getElementById('resultText');
 
@@ -149,28 +122,6 @@
 
             // --- Inicialización ---
             function initialize() {
-                // Crear checkboxes de provincias
-                ALL_PROVINCES.forEach(name => {
-                    const province = PROVINCE_DATA[name];
-                    const div = document.createElement('div');
-                    div.className = 'flex items-center';
-                    const input = document.createElement('input');
-                    input.type = 'checkbox';
-                    input.id = `prov-${name}`;
-                    input.name = name;
-                    input.checked = province.checked;
-                    input.className = 'h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500';
-                    const label = document.createElement('label');
-                    label.htmlFor = `prov-${name}`;
-                    label.textContent = name;
-                    label.className = 'ml-2 block text-sm text-gray-900 cursor-pointer';
-                    div.appendChild(input);
-                    div.appendChild(label);
-                    provincesContainer.appendChild(div);
-                    
-                    input.addEventListener('change', runCalculation);
-                });
-                
                 // Crear gráficos
                 const lineCtx = document.getElementById('lineChart').getContext('2d');
                 lineChart = new Chart(lineCtx, { type: 'line', data: { labels: COURSE_MONTHS.map(m => m.substring(0,3)), datasets: [] }, options: getChartOptions('Posición en bolsa') });
@@ -201,51 +152,27 @@
             function runCalculation() {
                 const position = parseInt(positionInput.value) || 0;
                 const vacancies = parseInt(vacanciesInput.value) || 0;
-                const selectedProvinces = Array.from(provincesContainer.querySelectorAll('input:checked')).map(el => el.name);
-
-                if (selectedProvinces.length === 0) {
-                    errorBlock.textContent = "Por favor, selecciona al menos una provincia.";
-                    errorBlock.classList.remove('hidden');
-                    resultsBlock.classList.add('hidden');
-                    return;
-                }
-                errorBlock.classList.add('hidden');
+                
                 resultsBlock.classList.remove('hidden');
 
                 // 1. Calcular posición tras vacantes de verano
-                const effectivePositionAfterSummer = Math.max(0, position - vacancies);
+                const effectivePosition = Math.max(0, position - vacancies);
                 if (position <= vacancies) {
                     updateUI({ isSummer: true }, 0);
                     return;
                 }
 
-                // 2. Calcular 'fuga' de competidores
-                const unselectedProvincesWeight = ALL_PROVINCES
-                    .filter(p => !selectedProvinces.includes(p))
-                    .reduce((acc, p) => acc + PROVINCE_DATA[p].weight, 0);
-                
-                const escapeRatio = unselectedProvincesWeight / TOTAL_PROVINCE_WEIGHT;
-                const finalEffectivePosition = effectivePositionAfterSummer * (1 - escapeRatio);
-
-                // 3. Calcular bajada y encontrar llamamiento
-                let cumulativePersonalized = 0;
-                let predictedResult = { isPredicted: false, effectivePosition: finalEffectivePosition };
-
-                const selectedProvincesWeight = TOTAL_PROVINCE_WEIGHT - unselectedProvincesWeight;
-                const provincialMultiplier = selectedProvinces.length > 0 ? selectedProvincesWeight / TOTAL_PROVINCE_WEIGHT : 0;
-                
-                let selectivityModifier = 1.0;
-                if (selectedProvinces.length <= 2) selectivityModifier = 0.9;
-                if (selectedProvinces.length >= 6) selectivityModifier = 1.05;
-                const totalMultiplier = provincialMultiplier * selectivityModifier;
+                // 2. Calcular bajada y encontrar llamamiento
+                let cumulativeDrop = 0;
+                let predictedResult = { isPredicted: false };
 
                 for (const month of COURSE_MONTHS) {
-                    const monthDrop = COURSE_MONTHLY_DROPS[month] * totalMultiplier;
-                    const prevCumulative = cumulativePersonalized;
-                    cumulativePersonalized += monthDrop;
+                    const monthDrop = COURSE_MONTHLY_DROPS[month];
+                    const prevCumulative = cumulativeDrop;
+                    cumulativeDrop += monthDrop;
 
-                    if (finalEffectivePosition <= cumulativePersonalized) {
-                        const positionIntoMonth = finalEffectivePosition - prevCumulative;
+                    if (effectivePosition <= cumulativeDrop) {
+                        const positionIntoMonth = effectivePosition - prevCumulative;
                         const callsInMonth = CALENDARIO_SIPRI.filter(c => c.mes === month);
                         let predictedCall = null;
 
@@ -255,12 +182,12 @@
                             predictedCall = callsInMonth[callIndex];
                         }
                         
-                        predictedResult = { month, call: predictedCall, isPredicted: true, isSummer: false, effectivePosition: finalEffectivePosition };
+                        predictedResult = { month, call: predictedCall, isPredicted: true, isSummer: false };
                         break;
                     }
                 }
                 
-                updateUI(predictedResult, finalEffectivePosition);
+                updateUI(predictedResult, effectivePosition);
             }
 
             function updateUI(prediction, effectivePosition) {
@@ -268,9 +195,9 @@
                 if (prediction.isSummer) {
                     resultText.innerHTML = `<p class="text-3xl md:text-4xl font-bold">¡Adjudicación estimada en Verano!</p>`;
                 } else if (!prediction.isPredicted || !prediction.call) {
-                    resultText.innerHTML = `<div><p class="text-2xl md:text-3xl font-bold">No se estima llamada este curso.</p><p class="text-sm mt-2 opacity-90">Tu posición efectiva es demasiado alta para los llamamientos previstos.</p></div>`;
+                    resultText.innerHTML = `<div><p class="text-2xl md:text-3xl font-bold">No se estima llamada este curso.</p><p class="text-sm mt-2 opacity-90">Tu posición efectiva (${Math.round(effectivePosition)}) supera los llamamientos previstos.</p></div>`;
                 } else {
-                    resultText.innerHTML = `<div><p class="text-3xl md:text-4xl font-bold">Estimación: ${prediction.month}</p><div class="mt-2 text-xl space-y-1"><p>Llamamiento SIPRI: <strong>${prediction.call.dia}</strong></p><p>Incorporación prevista: <strong>${prediction.call.incorporacion}</strong></p></div><p class="text-xs mt-3 opacity-80">Cálculo basado en una competencia real de ~${Math.round(prediction.effectivePosition)} personas para tus provincias.</p></div>`;
+                    resultText.innerHTML = `<div><p class="text-3xl md:text-4xl font-bold">Estimación: ${prediction.month}</p><div class="mt-2 text-xl space-y-1"><p>Llamamiento SIPRI: <strong>${prediction.call.dia}</strong></p><p>Incorporación prevista: <strong>${prediction.call.incorporacion}</strong></p></div><p class="text-xs mt-3 opacity-80">Cálculo basado en tu posición efectiva de ${Math.round(effectivePosition)} tras las vacantes.</p></div>`;
                 }
 
                 // Actualizar gráfico de líneas
@@ -287,7 +214,7 @@
                 // Actualizar gráfico de barras
                 const barColors = COURSE_MONTHS.map(month => month === prediction.month ? '#1B5E20' : '#A5D6A7');
                 barChart.data.datasets = [{
-                    label: 'Llamamientos Mensuales (General)',
+                    label: 'Llamamientos Mensuales Estimados',
                     data: Object.values(COURSE_MONTHLY_DROPS),
                     backgroundColor: barColors,
                     borderRadius: 4
